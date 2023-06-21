@@ -20,11 +20,9 @@ export class PostService {
 
   async create({ content, title, authorId }: CreatePostDto) {
     try {
-      console.log(this.postRepository);
       const entity = this.postRepository.create({ content, title });
       const author = await this.userService.getBy({ id: authorId });
       entity.author = author.user;
-      console.log(entity);
       const savedPost = await this.postRepository.save(entity);
       return this.errorService.success('Success', { post: savedPost });
     } catch (e) {

@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { Base } from '../../database/typeorm/Base';
 import { UserEntity } from '../../user/enitity/user.entity';
 
@@ -11,5 +11,6 @@ export class PostEntity extends Base {
   content: string;
 
   @ManyToOne(() => UserEntity, (user) => user.posts)
+  @JoinColumn({ name: 'author_id' })
   author: UserEntity;
 }

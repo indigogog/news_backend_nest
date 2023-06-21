@@ -4,7 +4,6 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 export const getDataSourceFactory = async (options: DataSourceOptions) => {
   const datasource = await new DataSource(options).initialize();
-  // await datasource.dropDatabase()
   await datasource.runMigrations({ transaction: 'all' });
   return datasource;
 };
