@@ -1,0 +1,42 @@
+version: "3.10"
+
+services:
+  db:
+    image: postgres:15.0
+    container_name: db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - pgsql-sock:/var/run/postgresql
+    networks:
+      - web
+
+  backend:
+    image: node:18.16.0
+    container_name: backend
+    ports:
+      - "9000:9000"
+    networks:
+      - web
+    depends_on:
+      - db
+    volumes:
+      - ./:/backend
+      - pgsql-sock:/var/run/postgresql
+    working_dir: /backend
+    command: bash -c "
+      yarn &&
+      yarn run start:dev
+      "
+
+volumes:
+  pgdata:
+  pgsql-sock:
+
+networks:
+  web:
