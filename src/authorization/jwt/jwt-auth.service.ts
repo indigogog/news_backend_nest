@@ -42,8 +42,8 @@ export class JwtAuthService {
       }
 
       const payload = this.getPayload(user);
-      const refreshToken = await this.generateToken(payload, '30d');
-      const accessToken = await this.generateToken(payload, '24h');
+      const refreshToken = await this.generateToken(payload, '3d');
+      const accessToken = await this.generateToken(payload, '3m');
 
       return { accessToken, refreshToken };
     } catch (e) {
