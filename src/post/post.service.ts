@@ -45,12 +45,10 @@ export class PostService {
   async update(id: string, dto: UpdatePostDto) {
     try {
       if (!dto.title && !dto.content)
-        throw this.errorService.badRequest('Title and content are empty');
-      const post = await this.postRepository.save({
-        id,
-        ...removeNullFromProperties(dto),
-      });
-      return this.errorService.success('Success', { post });
+        throw this.errorService.badRequest('Nothing for update');
+      await this.postRepository.update({ id }, { ...removeNullFromProperties(dto) });
+      const updatedPost = await this.postRepository.findOne({ where: { id } });
+      return this.errorService.success('Success', { updatedPost });
     } catch (e) {
       if (e instanceof HttpException) throw e;
       throw this.errorService.internal('Update post error', e.message);

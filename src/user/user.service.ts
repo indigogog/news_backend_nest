@@ -55,9 +55,8 @@ export class UserService {
       const duplicate = await this.userRepository.findOneBy({
         email: dto.email,
       });
-      if (duplicate) {
+      if (duplicate)
         throw this.errorService.badRequest(`E-mail ${dto.email} already exist`);
-      }
 
       const entity = this.userRepository.create(dto);
       const savedUser = await this.userRepository.save(entity);
@@ -71,12 +70,17 @@ export class UserService {
 
   async update(id: string, dto: UpdateUserDto) {
     try {
-      const user = await this.userRepository.save({
-        id,
-        ...removeNullFromProperties(dto),
-      });
-      return this.errorService.success('Success', { user });
+      if (!dto.firstname && !dto.lastname)
+        throw this.errorService.badRequest('Nothing for update');
+
+      await this.userRepository.update(
+        { id },
+        { ...removeNullFromProperties(dto) },
+      );
+      const updatedUser = await this.userRepository.findOne({ where: { id } });
+      return this.errorService.success('Success', { updatedUser });
     } catch (e) {
+      if (e instanceof HttpException) throw e;
       throw this.errorService.internal('Update user error', e.message);
     }
   }
